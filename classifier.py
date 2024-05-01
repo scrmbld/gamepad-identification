@@ -28,13 +28,13 @@ def players_inputs(file_path='dataset/velocities/'):
     Returns a dict in the form player_name: player_inputs where player_inputs is a pd.DataFrame.
     """
     all_files = get_filenames(file_path)
-    print(all_files)
-
+    """
     games_inputs = {}
     for filename in all_files:
         fpath = file_path + filename
         inputs = pd.read_csv(fpath)
         games_inputs[filename.split('.')[0]] = inputs
+    """
 
     player_files = {}
     for filename in all_files:
@@ -49,14 +49,14 @@ def players_inputs(file_path='dataset/velocities/'):
 
     for player in player_files.keys():
         # get the inputs from all the games played by a certain player
-        player_games_inputs = [pd.read_csv(file_path + game + '.csv', index_col=None) for game in player_files[player]]
+        player_games_inputs = [pd.read_csv(os.path.join(file_path, game +'.csv'), index_col=None) for game in player_files[player]]
         player_inputs = pd.concat(player_games_inputs, ignore_index=True)
         
         inputs_by_player[player] = player_inputs
     
     return inputs_by_player
 
-inputs_by_player = players_inputs('dataset/velocities/')
+inputs_by_player = players_inputs('dataset/velocities')
 
 # tokenization of players
 #---------------------------------------------------------------
@@ -132,18 +132,17 @@ def prepare_data(inputs_by_player, seq_len=SEQ_LEN, split=SPLIT):
 
     return ((train_x, train_y), (valid_x, valid_y), (test_x, test_y))
 
-# the classifier
+# the classifier itself
 #---------------------------------------------------------------
 import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Conv1D, ELU, Dropout, Dense, Concatenate, LSTM, GRU
 
-# GPU configuration
+# GPU configuration -- allocate memory as it is needed, rather than all of it at once
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
   try:
-    # Currently, memory growth needs to be the same across GPUs
     for gpu in gpus:
       tf.config.experimental.set_memory_growth(gpu, True)
     logical_gpus = tf.config.list_logical_devices('GPU')
@@ -153,7 +152,7 @@ if gpus:
     print(e)
 
 
-def createClassifier(width=3, seq_len=120):
+def createClassifier(width=3, seq_len=180):
     input_layer = Input(shape=(seq_len, width))
     conv1 = Conv1D(filters=32, kernel_size=7, strides=2, activation=ELU())(input_layer)
     conv2 = Conv1D(filters=32, kernel_size=3, strides=1, activation=ELU())(input_layer)
@@ -161,10 +160,11 @@ def createClassifier(width=3, seq_len=120):
     catted = Concatenate(axis=1)([conv1, conv2])
     elu1 = ELU(32)(catted)
     conv3 = Conv1D(filters=32, kernel_size=2, strides=1, activation=ELU())(elu1)
-    drop1 = Dropout(0.2)(conv3)
+    conv4 = Conv1D(filters=32, kernel_size=2, strides=1, activation=ELU())(conv3)
+    drop1 = Dropout(0.2)(conv4)
 
-    gru1 = GRU(32, return_sequences=True)(drop1)
-    gru2 = GRU(32)(gru1)
+    gru1 = LSTM(32, return_sequences=True)(drop1)
+    gru2 = LSTM(32)(gru1)
     drop2 = Dropout(0.2)(gru2)
 
     output = Dense(len(players_set), activation='softmax')(drop2)

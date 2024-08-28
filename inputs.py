@@ -1,3 +1,5 @@
+# basically the same as the stuff in
+
 from slippi import Game
 
 import pandas as pd

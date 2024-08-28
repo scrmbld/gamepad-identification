@@ -4,4 +4,6 @@ dataset
 search_plots
 results
 models
+demo.ipynb
+*.ju.py
 __pycache__

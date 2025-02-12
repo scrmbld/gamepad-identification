@@ -1,7 +1,12 @@
 key
 other_stuff
-dataset
+# See dataset/.gitignore
+# dataset/*
 search_plots
 results
 models
+*.ju.py
+Untitled*
+env
 __pycache__
+.ipynb_checkpoints

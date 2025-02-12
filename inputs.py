@@ -1,11 +1,14 @@
+"""
+Module containing a bunch of functions for reading the controller inputs from slippi replay files.
+"""
 from slippi import Game
 
 import pandas as pd
 
 
-def gamesFromPaths(paths):
+def gamesFromPaths(paths: list[str]):
     """
-    Given a list of paths, load them all in as py-slippi games and return that list.
+    Given a list of paths, load them all in as py-slippi games and return that list. Breaks if any of the given paths are invalid.
     """
     games = []
     for p in paths:
@@ -14,8 +17,10 @@ def gamesFromPaths(paths):
     return games
 
 
-# get the port indices used by the players
 def getPorts(game):
+    """
+    Gets the controller port indices used by the players.
+    """
     ports = []
     for i in range(0, len(game.start.players)):
         if game.start.players[i] is not None:
@@ -25,6 +30,9 @@ def getPorts(game):
 
 # determine filenames of extracted input files
 def decideFileNames(path):
+    """
+    Given the path of an slp file, decide what the filename of the CSV of inputs from that replay should be called
+    """
     # get the names of our 2 files
     names = path.split('/')[-2].split('_')[0:2] # get the 2 player names from the directory name
 
@@ -38,9 +46,10 @@ def decideFileNames(path):
 
     return p1_name, p2_name
 
-# get all of the characters played in the game
 def getCharacters(game):
-    """Given a py-slippi game object, return a list of the characters used ordered by port."""
+    """
+    Given a py-slippi game object, return a list of the characters used ordered by port.
+    """
     characters = []
     for player in game.start.players:
         if player is not None:
@@ -50,14 +59,14 @@ def getCharacters(game):
 
 
 START_FRAME = 64 # game starts on frame 64
-COLS = ['joy_x', 'joy_y', 'cstick_x', 'cstick_y', 'z', 'r_dig', 'l_dig', 'a', 'b', 'x', 'y']
-BUTTONS = ['Z', 'R', 'L', 'A', 'B', 'X', 'Y'] # names of the buttons in py-slippi
+COLS = ['joy_x', 'joy_y', 'cstick_x', 'cstick_y', 'z', 'r_dig', 'l_dig', 'a', 'b', 'x', 'y'] # the names of the buttons in the output CSVs
+BUTTONS = ['Z', 'R', 'L', 'A', 'B', 'X', 'Y'] # names of the buttons in py-slippi (i.e., their names when we load them from the replay file)
 
 def getFrameInputs(player):
     """
-    Get the state of all buttons/analog sticks for a given player.
+    Get the state of all buttons/analog sticks for a given player, given the "leader.pre" field for a particular frame and port
     """
-    # analog stick / c stick
+    # analog stick / c stick (AKA left and right analog sticks respectively when we're talking about controllers other than the gamecube)
     analog = [player.joystick.x, player.joystick.y, player.cstick.x, player.cstick.y]
 
     # buttons
@@ -66,7 +75,6 @@ def getFrameInputs(player):
     logical_pressed_names = map(lambda x: x.name, player.buttons.physical.pressed())
 
     for b in BUTTONS:
-
         if b in logical_pressed_names:
             pressed_buttons.append(1)
         else:

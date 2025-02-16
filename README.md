@@ -2,7 +2,7 @@
 
 This repository includes code for performing biometric identification on *Super Smash Bros Melee* players using analog stick inputs performed during gameplay. Although biometric identification in games has been done before using mouse and keyboard inputs, I have been unable to find any examples of identifying players on traditional gamepads. This repository demonstrates a complete process from data collection to classification for game controller biometrics.
 
-The main purpose of this experiment was to see if the analog stick on a game controller could be used to draw any useful conclusions about the player (such as their identity). As such, I only used the controller's left analog stick as input.
+The main purpose of this experiment was to see if the analog stick on a game controller could be used to draw any useful conclusions about the player (such as their identity). As such, I only used the controller's left analog stick to do the identification. I believe that higher performance could be achieved by a model that also uses the buttons.
 
 The most effective version of the system used a combined 1D Convolutional + LSTM architecture and achieved a top-1 accuracy of around 85% across 16 classes from 180 analog stick movements as input (on average ~10 seconds of gameplay).
 
@@ -12,7 +12,7 @@ The most effective version of the system used a combined 1D Convolutional + LSTM
 `git clone git@github.com:scrmbld/gamepad-identification.git`
 1. Install dependencies (using a virtual environment may be preferable)
 `pip install tensorflow matplotlib numpy pandas scikit-learn seaborn py-slippi`
-1. Download the dataset
+1. Download the dataset and place it in the "dataset" directory
     - slp replays: https://drive.google.com/file/d/1U_PeNa1P0tIoG1ZzmKTA2Ya2I_Ola6as/view
     - Controller state CSVs (smaller, enough to run the classifier): https://drive.google.com/file/d/15iWt38Gzxh9shicN2fhsukWBtXGJSOWn/view
 

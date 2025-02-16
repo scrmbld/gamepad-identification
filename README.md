@@ -9,9 +9,9 @@ The most effective version of the system used a combined 1D Convolutional + LSTM
 ## Usage
 
 1. Clone the repository
-`git clone git@github.com:scrmbld/gamepad-identification.git`
+    - `git clone git@github.com:scrmbld/gamepad-identification.git`
 1. Install dependencies (using a virtual environment may be preferable)
-`pip install tensorflow matplotlib numpy pandas scikit-learn seaborn py-slippi`
+    - `pip install tensorflow matplotlib numpy pandas scikit-learn seaborn py-slippi`
 1. Download the dataset and place it in the "dataset" directory
     - slp replays: https://drive.google.com/file/d/1U_PeNa1P0tIoG1ZzmKTA2Ya2I_Ola6as/view
     - Controller state CSVs (smaller, enough to run the classifier): https://drive.google.com/file/d/15iWt38Gzxh9shicN2fhsukWBtXGJSOWn/view

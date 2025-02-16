@@ -5,3 +5,4 @@ search_plots
 results
 models
 __pycache__
+.ipynb_checkpoints
